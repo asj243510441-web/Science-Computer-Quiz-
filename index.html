@@ -1,0 +1,3497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCIENCE COMPUTER QUIZ · ULTIMATE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #2a1a3a 100%);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .glow-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2;
+            animation: orbFloat 25s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(3%, 3%) scale(1.1); }
+            66% { transform: translate(-3%, -3%) scale(0.9); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(-100px) translateX(20px);
+                opacity: 1;
+            }
+        }
+
+        .game-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .volume-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .volume-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .volume-control span {
+            font-size: 1.8rem;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-title {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #aaddff, #ffaa88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            font-family: 'Montserrat', 'Poppins', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        /* ===== MENU BAR DENGAN TITLE DISPLAY DAN INFO BUTTON ===== */
+        .menu-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0 20px 0;
+        }
+
+        .info-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            margin-right: 5px;
+        }
+
+        .info-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+            border-color: white;
+        }
+
+        .current-title {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 8px 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        .menu-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 8px 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .menu-btn.shop {
+            background: rgba(255, 215, 0, 0.1);
+            color: gold;
+        }
+
+        .menu-btn.achievement {
+            background: rgba(100, 150, 255, 0.1);
+            color: #aaccff;
+        }
+
+        .menu-btn.title {
+            background: rgba(255, 100, 150, 0.1);
+            color: #ffaacc;
+        }
+
+        .menu-btn.stats {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .menu-btn.stats:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* ===== TITLE EFFECTS ===== */
+        .title-rookie { color: #aaffaa; text-shadow: 0 0 10px #00ff00; }
+        .title-warrior { color: #88aaff; text-shadow: 0 0 15px #0066ff; animation: glowPulse 2s infinite; }
+        .title-legend { color: #cc88ff; text-shadow: 0 0 20px #aa00ff, 0 0 40px #ff00ff; animation: legendGlow 3s infinite; }
+        .title-unstoppable { color: #ff8888; text-shadow: 0 0 15px #ff3300, 0 0 30px #ff0000; animation: fireFlicker 1s infinite; }
+        .title-perfect { color: gold; text-shadow: 0 0 20px gold, 0 0 40px #ffaa00; animation: shimmer 2s infinite; }
+        .title-rich { color: gold; text-shadow: 0 0 10px gold, 0 0 30px #ffaa00; background: linear-gradient(45deg, gold, #ffaa00, gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .title-pureskill { color: white; text-shadow: 0 0 10px cyan, 0 0 20px blue; animation: pureGlow 3s infinite; }
+
+        @keyframes glowPulse { 0%,100% { text-shadow: 0 0 15px #0066ff; } 50% { text-shadow: 0 0 30px #0066ff,0 0 45px #00aaff; } }
+        @keyframes legendGlow { 0%,100% { text-shadow: 0 0 20px #aa00ff,0 0 40px #ff00ff; } 50% { text-shadow: 0 0 40px #aa00ff,0 0 80px #ff00ff,0 0 120px #ff88ff; } }
+        @keyframes fireFlicker { 0%,100% { text-shadow: 0 0 15px #ff3300,0 0 30px #ff0000; } 25% { text-shadow: 0 0 20px #ff6600,0 0 40px #ff3300; } 75% { text-shadow: 0 0 10px #ff0000,0 0 25px #ff6600; } }
+        @keyframes shimmer { 0% { filter: brightness(1); } 50% { filter: brightness(1.5); text-shadow: 0 0 30px gold,0 0 60px #ffaa00; } }
+        @keyframes pureGlow { 0%,100% { text-shadow: 0 0 10px cyan,0 0 20px blue; } 50% { text-shadow: 0 0 20px cyan,0 0 40px blue,0 0 60px white; } }
+
+        .level-section {
+            margin: 20px 0;
+        }
+
+        .level-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .level-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .level-btn.easy {
+            background: rgba(81, 207, 102, 0.3);
+            color: #aaffaa;
+            border-color: #51cf66;
+        }
+
+        .level-btn.easy:hover, .level-btn.easy.selected {
+            background: rgba(81, 207, 102, 0.7);
+            color: white;
+            box-shadow: 0 0 30px #51cf66;
+        }
+
+        .level-btn.medium {
+            background: rgba(255, 170, 51, 0.3);
+            color: #ffcc88;
+            border-color: #ffaa00;
+        }
+
+        .level-btn.medium:hover, .level-btn.medium.selected {
+            background: rgba(255, 170, 51, 0.7);
+            color: white;
+            box-shadow: 0 0 30px #ffaa00;
+        }
+
+        .level-btn.hard {
+            background: rgba(255, 71, 87, 0.3);
+            color: #ffaaaa;
+            border-color: #ff4757;
+        }
+
+        .level-btn.hard:hover, .level-btn.hard.selected {
+            background: rgba(255, 71, 87, 0.7);
+            color: white;
+            box-shadow: 0 0 30px #ff4757;
+        }
+
+        .daily-reward {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .reward-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reward-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+
+        .reward-text {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .reward-subtext {
+            color: #ffaa00;
+            font-size: 0.8rem;
+        }
+
+        .claim-btn {
+            background: rgba(255, 170, 51, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .claim-btn:hover { background: rgba(255, 170, 51, 0.9); }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .section-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 15px 0 10px 0;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* ===== DAILY QUESTS SECTION ===== */
+        .quests-section {
+            margin: 20px 0;
+        }
+
+        .quests-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quest-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .quest-card.completed {
+            border-color: gold;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .quest-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .quest-info {
+            flex: 1;
+        }
+
+        .quest-name {
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .quest-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .quest-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .quest-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffaa00, #ffdd55);
+            transition: width 0.3s;
+        }
+
+        .quest-reward {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: gold;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .quest-check {
+            font-size: 1.5rem;
+            color: #51cf66;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .quest-card.completed .quest-check {
+            opacity: 1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 12px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-card.selected {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-logo {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 8px auto;
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            overflow: hidden;
+        }
+
+        .hero-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-name {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .powerups-title {
+            color: white;
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        .powerups-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .powerup-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 12px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .powerup-card.selected {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .powerup-card.hard-disabled {
+            opacity: 0.4;
+            filter: grayscale(0.8);
+            cursor: not-allowed;
+            border-color: #666 !important;
+            box-shadow: none !important;
+        }
+
+        .powerup-card.hard-disabled:hover {
+            transform: none !important;
+            border-color: #666 !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .powerup-card.hard-disabled .powerup-count {
+            background: #444;
+            color: #aaa;
+            border-color: #666;
+        }
+
+        .hard-mode-warning {
+            font-size: 0.6rem;
+            color: #ff6b6b;
+            margin-top: 5px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .powerup-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .powerup-name {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .powerup-desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.65rem;
+        }
+
+        .powerup-count {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .leaderboard-preview {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaderboard-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .leaderboard-header-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 15px #ffaa00);
+        }
+
+        .leaderboard-header-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-rank {
+            width: 40px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .leaderboard-rank.gold { color: #ffd700; text-shadow: 0 0 15px #ffd700; }
+        .leaderboard-rank.silver { color: #c0c0c0; text-shadow: 0 0 15px #c0c0c0; }
+        .leaderboard-rank.bronze { color: #cd7f32; text-shadow: 0 0 15px #cd7f32; }
+        .leaderboard-rank.default { color: rgba(255, 255, 255, 0.8); }
+
+        .leaderboard-name {
+            flex: 1;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .leaderboard-score {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: #ffaa00;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+        }
+
+        .view-all-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-all-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .view-all-btn span {
+            font-size: 1.2rem;
+        }
+
+        .continue-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .name-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 200px 100px;
+            margin: 20px 0;
+        }
+
+        .name-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .name-input-container {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .input-icon {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .name-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .name-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .name-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .name-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .name-btn.back {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .name-btn.back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .name-btn.start {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .name-btn.start:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .name-btn.start:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .battle-container {
+            width: 100%;
+        }
+
+        .vs-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .player-area, .enemy-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 110px;
+        }
+
+        .player-title {
+            font-size: 0.7rem;
+            margin-top: 2px;
+            padding: 2px 8px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hero-avatar {
+            width: 60px;
+            height: 60px;
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            animation: characterIdle 3s ease-in-out infinite;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes characterIdle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(2deg); }
+            75% { transform: translateY(3px) rotate(-2deg); }
+        }
+
+        @keyframes characterAttack {
+            0% { transform: translateX(0) scale(1); }
+            30% { transform: translateX(25px) scale(1.2) rotate(5deg); }
+            60% { transform: translateX(-5px) scale(1.1) rotate(-3deg); }
+            100% { transform: translateX(0) scale(1) rotate(0); }
+        }
+
+        @keyframes characterHit {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px) rotate(-5deg); }
+            40% { transform: translateX(8px) rotate(4deg); }
+            60% { transform: translateX(-5px) rotate(-2deg); }
+            80% { transform: translateX(3px) rotate(1deg); }
+        }
+
+        .hero-avatar.attacking {
+            animation: characterAttack 0.5s ease-out !important;
+        }
+
+        .hero-avatar.hit {
+            animation: characterHit 0.5s ease-out !important;
+            filter: brightness(1.5) drop-shadow(0 0 10px #ff4757);
+        }
+
+        .enemy-area .hero-avatar {
+            animation: characterIdle 3.5s ease-in-out infinite reverse;
+        }
+
+        .hero-name-tag {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .health-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .health-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .health-bar {
+            height: 100%;
+            background: rgba(81, 207, 102, 0.8);
+            transition: width 0.3s;
+        }
+
+        .health-value {
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .vs-middle {
+            font-size: 2rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .info-row span {
+            color: white;
+            font-weight: 600;
+        }
+
+        .timer-box {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .timer-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            transition: all 0.2s;
+        }
+
+        .timer-circle.urgent-3 {
+            background: linear-gradient(135deg, #ff3333, #ff0000) !important;
+            animation: urgentPulse3 0.3s ease-in-out infinite;
+            box-shadow: 0 0 60px #ff0000 !important;
+            border-color: #ffaa00 !important;
+        }
+
+        @keyframes urgentPulse3 {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.15); filter: brightness(1.5); box-shadow: 0 0 80px #ff3300; }
+        }
+
+        .timer-circle.urgent-2 {
+            background: linear-gradient(135deg, #ff5500, #ff0000) !important;
+            animation: urgentShake2 0.2s ease-in-out infinite;
+            box-shadow: 0 0 80px #ff5500 !important;
+            border-color: #ffff00 !important;
+        }
+
+        @keyframes urgentShake2 {
+            0%, 100% { transform: translateX(0) scale(1); }
+            25% { transform: translateX(-5px) scale(1.1); }
+            50% { transform: translateX(5px) scale(1.15); }
+            75% { transform: translateX(-3px) scale(1.1); }
+        }
+
+        .timer-circle.urgent-1 {
+            background: linear-gradient(135deg, #ff0000, #990000) !important;
+            animation: urgentExplode 0.1s ease-in-out infinite;
+            box-shadow: 0 0 100px #ff0000, 0 0 150px #ff6600 !important;
+            border-color: #ffffff !important;
+            color: #ffff00;
+            font-weight: 900;
+        }
+
+        @keyframes urgentExplode {
+            0%, 100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+            25% { transform: scale(1.2) rotate(5deg); filter: brightness(2); }
+            50% { transform: scale(1.3) rotate(-5deg); filter: brightness(2.5); }
+            75% { transform: scale(1.2) rotate(3deg); filter: brightness(2); }
+        }
+
+        .battle-powerups {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .power-btn {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .power-btn.ready {
+            border-color: rgba(81, 207, 102, 0.8);
+            box-shadow: 0 0 20px rgba(81, 207, 102, 0.5);
+        }
+
+        .power-btn.cooldown {
+            border-color: rgba(255, 71, 87, 0.8);
+            opacity: 0.7;
+        }
+
+        .power-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .power-icon {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+        }
+
+        .power-count {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .question-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .answer-btn:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .answer-btn.correct {
+            background: rgba(81, 207, 102, 0.5);
+            border-color: rgba(81, 207, 102, 0.8);
+        }
+
+        .answer-btn.wrong {
+            background: rgba(255, 71, 87, 0.5);
+            border-color: rgba(255, 71, 87, 0.8);
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .countdown-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .countdown-content {
+            text-align: center;
+            animation: countdownAppear 0.3s ease-out;
+        }
+
+        .countdown-number {
+            font-size: 12rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 50px #ffaa00, 0 0 100px #ff5500, 0 0 150px #ff0000;
+            line-height: 1;
+            margin-bottom: 20px;
+            animation: countdownPop 0.5s ease-out;
+        }
+
+        .countdown-text {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffaa00, #ff5500, #ff0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 85, 0, 0.5);
+            animation: countdownGlow 0.5s ease-out;
+        }
+
+        @keyframes countdownAppear {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes countdownPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes countdownGlow {
+            0% { opacity: 0; text-shadow: 0 0 0 rgba(255,85,0,0); }
+            100% { opacity: 1; text-shadow: 0 0 50px rgba(255,85,0,0.8); }
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .popup-overlay.active { display: flex; }
+
+        .popup-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .popup-content.win { border-color: rgba(81, 207, 102, 0.8); }
+        .popup-content.lose { border-color: rgba(255, 71, 87, 0.8); }
+
+        .popup-title { font-size: 2rem; font-weight: 800; color: white; }
+        .popup-emoji { font-size: 3.5rem; margin: 15px 0; }
+        .popup-score { font-size: 1.8rem; color: #ffaa00; margin: 15px 0; }
+        .popup-level { font-size: 1.2rem; color: #88aaff; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .popup-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .popup-btn.main-menu { background: rgba(255, 71, 87, 0.5); }
+        .popup-btn.new-game { background: rgba(81, 207, 102, 0.5); }
+
+        /* ===== SHOP POPUP ===== */
+        .shop-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 12px 15px;
+        }
+
+        .item-icon {
+            font-size: 2rem;
+            width: 50px;
+        }
+
+        .item-name {
+            color: white;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .item-price {
+            color: gold;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #ffaa00, #ff8800);
+            border: none;
+            border-radius: 30px;
+            padding: 6px 15px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px gold;
+        }
+
+        /* ===== ACHIEVEMENTS POPUP ===== */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .achievement-card {
+            background: rgba(30, 30, 50, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .achievement-card.completed {
+            background: rgba(81, 207, 102, 0.2);
+            border-color: #51cf66;
+            box-shadow: 0 0 20px rgba(81, 207, 102, 0.3);
+        }
+
+        .achievement-card.completed.equipped {
+            border-color: gold;
+            box-shadow: 0 0 30px gold;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+
+        .achievement-name {
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 4px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== TITLES POPUP ===== */
+        .titles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .title-card {
+            background: rgba(30, 30, 50, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .title-card:hover:not(.locked) {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .title-card.unlocked {
+            background: rgba(81, 207, 102, 0.15);
+            border-color: #51cf66;
+        }
+
+        .title-card.equipped {
+            border-color: gold !important;
+            box-shadow: 0 0 30px gold;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .title-card.locked {
+            opacity: 0.4;
+            filter: grayscale(0.8);
+            cursor: not-allowed;
+            background: rgba(20, 20, 30, 0.8);
+        }
+
+        .title-preview {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .title-name {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .title-from {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+        }
+
+        /* ===== TUTORIAL POPUP - KECIK & PADAT ===== */
+        .tutorial-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 15px 0;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 3px;
+        }
+
+        .tutorial-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 8px 12px;
+            border-left: 3px solid #667eea;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: white;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            text-align: left;
+        }
+
+        .step-text strong {
+            color: #aaccff;
+            font-size: 0.8rem;
+        }
+
+        .tutorial-tip {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid gold;
+            border-radius: 20px;
+            padding: 8px 15px;
+            color: gold;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* ===== STATISTICS POPUP (RINGKAS) ===== */
+        .stats-simple {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px 20px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .stat-label span {
+            font-size: 1.3rem;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        /* ===== QUEST NOTIFICATION ===== */
+        .quest-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, gold, #ffaa00);
+            color: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.5s, fadeOut 0.5s 2.5s forwards;
+            box-shadow: 0 0 30px gold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 300px;
+        }
+
+        .quest-notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .quest-notification-text {
+            flex: 1;
+        }
+
+        .quest-notification-title {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .quest-notification-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .quest-notification-reward {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-orbs" id="glowOrbs"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="game-wrapper">
+        <div class="volume-control" id="volumeToggle">
+            <span id="volumeIcon">🔊</span>
+        </div>
+
+        <!-- PAGE 1: HERO SELECTION -->
+        <div class="page active" id="page1">
+            <div class="header">
+                <h1 class="game-title">SCIENCE COMPUTER QUIZ</h1>
+                <div class="subtitle">Answer questions, defeat monsters!</div>
+            </div>
+
+            <!-- MENU BAR DENGAN INFO BUTTON -->
+            <div class="menu-bar">
+                <button class="info-btn" id="infoBtn">i</button>
+                <div class="current-title" id="currentTitleDisplay">No title selected</div>
+                <div class="menu-buttons">
+                    <button class="menu-btn shop" id="openShopBtn">🛒 SHOP</button>
+                    <button class="menu-btn achievement" id="openAchievementBtn">🏆 ACHIEVEMENTS</button>
+                    <button class="menu-btn title" id="openTitleBtn">👑 TITLES</button>
+                    <button class="menu-btn stats" id="openStatsBtn">📊 STATS</button>
+                </div>
+            </div>
+
+            <!-- LEVEL SELECTION -->
+            <div class="level-section">
+                <div class="section-title">SELECT DIFFICULTY</div>
+                <div class="level-buttons">
+                    <button class="level-btn easy" id="levelEasy" data-level="easy">EASY</button>
+                    <button class="level-btn medium" id="levelMedium" data-level="medium">MEDIUM</button>
+                    <button class="level-btn hard" id="levelHard" data-level="hard">HARD</button>
+                </div>
+            </div>
+
+            <!-- DAILY REWARD -->
+            <div class="daily-reward" id="dailyReward">
+                <div class="reward-left">
+                    <span class="reward-icon">🎁</span>
+                    <div>
+                        <div class="reward-text">DAILY REWARD</div>
+                        <div class="reward-subtext">Random coins (50-200) every day!</div>
+                    </div>
+                </div>
+                <button class="claim-btn" id="claimDailyBtn">CLAIM</button>
+            </div>
+
+            <!-- DAILY QUESTS SECTION -->
+            <div class="quests-section">
+                <div class="section-title">🎯 DAILY QUESTS</div>
+                <div class="quests-container" id="dailyQuests"></div>
+            </div>
+
+            <div class="section-title">CHOOSE YOUR HERO</div>
+
+            <!-- HERO GRID -->
+            <div class="hero-grid">
+                <div class="hero-card" data-hero="swordsman">
+                    <div class="hero-logo">
+                        <img src="images/swordsman.png" alt="Swordsman">
+                    </div>
+                    <div class="hero-name">SWORDSMAN</div>
+                </div>
+                <div class="hero-card" data-hero="archer">
+                    <div class="hero-logo">
+                        <img src="images/archer.png" alt="Archer">
+                    </div>
+                    <div class="hero-name">ARCHER</div>
+                </div>
+                <div class="hero-card" data-hero="titan">
+                    <div class="hero-logo">
+                        <img src="images/titan.png" alt="Titan">
+                    </div>
+                    <div class="hero-name">TITAN</div>
+                </div>
+                <div class="hero-card" data-hero="goblin">
+                    <div class="hero-logo">
+                        <img src="images/goblin.png" alt="Goblin">
+                    </div>
+                    <div class="hero-name">GOBLIN</div>
+                </div>
+            </div>
+
+            <!-- POWER-UPS -->
+            <div class="powerups-title">🔋 SELECT POWER-UP</div>
+            <div class="powerups-row">
+                <div class="powerup-card" id="powerupTime" data-powerup="time">
+                    <div class="powerup-icon">⏱️</div>
+                    <div class="powerup-name">TIME FREEZE</div>
+                    <div class="powerup-desc">Freeze timer 4 sec</div>
+                    <div class="powerup-count" id="timeCount">1</div>
+                    <div class="hard-mode-warning">❌ Not in Hard</div>
+                </div>
+                <div class="powerup-card" id="powerupHealth" data-powerup="health">
+                    <div class="powerup-icon">❤️</div>
+                    <div class="powerup-name">HEALTH POTION</div>
+                    <div class="powerup-desc">+7% HP (≤80%)</div>
+                    <div class="powerup-count" id="healthCount">1</div>
+                    <div class="hard-mode-warning">❌ Not in Hard</div>
+                </div>
+                <div class="powerup-card" id="powerupHint" data-powerup="hint">
+                    <div class="powerup-icon">💡</div>
+                    <div class="powerup-name">SMART HINT</div>
+                    <div class="powerup-desc">50-50 elimination</div>
+                    <div class="powerup-count" id="hintCount">1</div>
+                    <div class="hard-mode-warning">❌ Not in Hard</div>
+                </div>
+            </div>
+
+            <!-- LEADERBOARD -->
+            <div class="leaderboard-preview">
+                <div class="leaderboard-header">
+                    <span class="leaderboard-header-icon">🏆</span>
+                    <span class="leaderboard-header-title">TOP PLAYERS</span>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList"></div>
+                <div class="view-all-btn" onclick="showFullLeaderboard()">
+                    <span>📊</span> VIEW FULL LEADERBOARD <span>→</span>
+                </div>
+            </div>
+
+            <button class="continue-btn" id="continueBtn" disabled>▶ CONTINUE TO BATTLE</button>
+        </div>
+
+        <!-- PAGE 2: NAME ENTRY -->
+        <div class="page" id="page2">
+            <div class="name-card">
+                <div class="name-title">ENTER YOUR NAME</div>
+                <div class="name-input-container">
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" class="name-input" id="playerName" placeholder="Your name...">
+                    </div>
+                </div>
+                <div class="name-buttons">
+                    <button class="name-btn back" id="backToHeroBtn">← BACK</button>
+                    <button class="name-btn start" id="startBattleBtn" disabled>START →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: BATTLE ARENA -->
+        <div class="page" id="page3">
+            <div class="battle-container">
+                <div class="vs-section">
+                    <div class="player-area">
+                        <div class="hero-avatar" id="playerAvatar"></div>
+                        <div class="hero-name-tag" id="playerNameDisplay">PLAYER</div>
+                        <div class="player-title" id="playerTitleDisplay"></div>
+                        <div class="health-container">
+                            <div class="health-bar-container"><div class="health-bar" id="playerHealthBar" style="width:100%"></div></div>
+                            <div class="health-value" id="playerHealthText">100%</div>
+                        </div>
+                    </div>
+                    <div class="vs-middle">VS</div>
+                    <div class="enemy-area">
+                        <div class="hero-avatar" id="enemyAvatar">
+                            <img src="images/enemy.png" alt="Enemy">
+                        </div>
+                        <div class="hero-name-tag" id="enemyName">BUG LORD</div>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div>SCORE: <span id="scoreDisplay">0</span></div>
+                    <div><span id="questionCounter">1/10</span></div>
+                </div>
+                
+                <div class="timer-box">
+                    <div class="timer-circle" id="timer">10</div>
+                </div>
+
+                <div class="battle-powerups">
+                    <div class="power-btn" id="battlePowerupTime">
+                        <span class="power-icon">⏱️</span>
+                        <span class="power-count" id="battleTimeCount">1</span>
+                    </div>
+                    <div class="power-btn" id="battlePowerupHealth">
+                        <span class="power-icon">❤️</span>
+                        <span class="power-count" id="battleHealthCount">1</span>
+                    </div>
+                    <div class="power-btn" id="battlePowerupHint">
+                        <span class="power-icon">💡</span>
+                        <span class="power-count" id="battleHintCount">1</span>
+                    </div>
+                </div>
+                
+                <div class="question-box" id="question">Loading...</div>
+                <div class="answer-grid" id="answerGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COUNTDOWN OVERLAY -->
+    <div class="countdown-overlay" id="countdownOverlay">
+        <div class="countdown-content">
+            <div class="countdown-number" id="countdownNumber">3</div>
+            <div class="countdown-text" id="countdownText">Get Ready!</div>
+        </div>
+    </div>
+
+    <!-- POPUP RESULT -->
+    <div class="popup-overlay" id="resultPopup"><div class="popup-content" id="popupContent"></div></div>
+    
+    <!-- LEADERBOARD FULL POPUP -->
+    <div class="popup-overlay" id="leaderboardPopup">
+        <div class="popup-content" style="border-color: #ffaa00; max-width: 400px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-size: 2.5rem;">🏆</span>
+                <span style="color:white; font-size: 1.8rem; font-weight: 700;">LEADERBOARD</span>
+            </div>
+            <div id="fullLeaderboardList" style="margin: 20px 0; max-height: 300px; overflow-y: auto; padding-right: 5px;"></div>
+            <button class="popup-btn new-game" onclick="closeLeaderboard()" style="width:100%; padding: 15px; font-size: 1.1rem;">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- SHOP POPUP -->
+    <div class="popup-overlay" id="shopPopup">
+        <div class="popup-content" style="border-color: rgba(255,255,255,0.2); max-width: 400px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 2.5rem;">🛒</span>
+                <span style="color:white; font-size: 1.8rem; font-weight: 700; margin-left: 10px;">SHOP</span>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 50px;">
+                <span style="color: gold; font-size: 1.5rem;">🪙</span>
+                <span style="color: white; font-size: 1.5rem; font-weight: 700;" id="shopCoinDisplay">100</span>
+            </div>
+            
+            <div class="shop-items">
+                <div class="shop-item">
+                    <span class="item-icon">⏱️</span>
+                    <span class="item-name">TIME FREEZE</span>
+                    <span class="item-price">🪙 100</span>
+                    <button class="buy-btn" onclick="buyItem('time', 100)">BUY</button>
+                </div>
+                <div class="shop-item">
+                    <span class="item-icon">❤️</span>
+                    <span class="item-name">HEALTH POTION</span>
+                    <span class="item-price">🪙 100</span>
+                    <button class="buy-btn" onclick="buyItem('health', 100)">BUY</button>
+                </div>
+                <div class="shop-item">
+                    <span class="item-icon">💡</span>
+                    <span class="item-name">SMART HINT</span>
+                    <span class="item-price">🪙 100</span>
+                    <button class="buy-btn" onclick="buyItem('hint', 100)">BUY</button>
+                </div>
+            </div>
+            
+            <button class="popup-btn new-game" onclick="closeShop()" style="width:100%; margin-top:20px;">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- ACHIEVEMENTS POPUP -->
+    <div class="popup-overlay" id="achievementPopup">
+        <div class="popup-content" style="border-color: rgba(100,150,255,0.5); max-width: 500px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-size: 2.5rem;">🏆</span>
+                <span style="color:white; font-size: 1.8rem; font-weight: 700;">ACHIEVEMENTS</span>
+            </div>
+            
+            <div class="achievements-grid" id="achievementsGrid"></div>
+            
+            <button class="popup-btn new-game" onclick="closeAchievements()" style="width:100%; margin-top:20px;">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- TITLES POPUP -->
+    <div class="popup-overlay" id="titlePopup">
+        <div class="popup-content" style="border-color: rgba(255,100,150,0.5); max-width: 500px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-size: 2.5rem;">👑</span>
+                <span style="color:white; font-size: 1.8rem; font-weight: 700;">TITLES</span>
+            </div>
+            
+            <div class="titles-grid" id="titlesGrid"></div>
+            
+            <button class="popup-btn new-game" onclick="closeTitles()" style="width:100%; margin-top:20px;">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- TUTORIAL POPUP - KECIK -->
+    <div class="popup-overlay" id="tutorialPopup">
+        <div class="popup-content" style="border-color: #667eea; max-width: 400px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                <span style="font-size: 2rem;">📖</span>
+                <span style="color:white; font-size: 1.5rem; font-weight: 700;">HOW TO PLAY</span>
+            </div>
+            
+            <div class="tutorial-steps">
+                <div class="tutorial-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text"><strong>Choose Hero</strong> - Swordsman, Archer, Titan, Goblin</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text"><strong>Difficulty</strong> - Easy/Medium/Hard (Hard = no power-ups)</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text"><strong>Pick Power-up</strong> - Select one for battle</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text"><strong>Answer</strong> - 10 questions, 10 seconds each</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text"><strong>Use Power-ups</strong> - Click during battle (5s cooldown)</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text"><strong>Earn Coins</strong> - Win games, quests, daily reward</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">7</div>
+                    <div class="step-text"><strong>Shop</strong> - Buy power-ups to increase inventory</div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">8</div>
+                    <div class="step-text"><strong>Titles</strong> - Complete achievements to unlock</div>
+                </div>
+            </div>
+            
+            <div class="tutorial-tip">
+                💡 Tip: Claim daily reward every day for bonus coins!
+            </div>
+            
+            <button class="popup-btn new-game" onclick="closeTutorial()" style="width:100%; margin-top:10px;">GOT IT!</button>
+        </div>
+    </div>
+
+    <!-- STATISTICS POPUP -->
+    <div class="popup-overlay" id="statsPopup">
+        <div class="popup-content" style="border-color: #667eea; max-width: 350px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-size: 2.5rem;">📊</span>
+                <span style="color:white; font-size: 1.8rem; font-weight: 700;">STATISTICS</span>
+            </div>
+            
+            <div class="stats-simple" id="statsSimple"></div>
+            
+            <button class="popup-btn new-game" onclick="closeStats()" style="width:100%; margin-top:20px;">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        let selectedHero = null;
+        let selectedPowerup = null;
+        let playerName = '';
+        let playerHP = 100;
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let timerInterval = null;
+        let timeLeft = 10;
+        let canAnswer = true;
+        let powerupCooldown = false;
+        let musicStarted = false;
+        let gameStartTime = 0;
+        let powerupsUsed = 0;
+        let heroesUsed = [];
+        let winStreak = 0;
+
+        // INVENTORY - MULAI 1
+        let inventory = {
+            time: 1,
+            health: 1,
+            hint: 1
+        };
+
+        // COINS
+        let coins = 100;
+        let dailyClaimed = false;
+
+        // ===== PLAYER STATISTICS =====
+        let playerStats = {
+            totalGames: 0,
+            wins: 0,
+            totalCoinsEarned: 0,
+            longestStreak: 0,
+            currentStreak: 0
+        };
+
+        function loadStats() {
+            const saved = localStorage.getItem('playerStats');
+            if (saved) {
+                playerStats = JSON.parse(saved);
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem('playerStats', JSON.stringify(playerStats));
+        }
+
+        function updateStats(gameWon) {
+            playerStats.totalGames++;
+            
+            if (gameWon) {
+                playerStats.wins++;
+                playerStats.currentStreak++;
+                playerStats.totalCoinsEarned += 20;
+                
+                if (playerStats.currentStreak > playerStats.longestStreak) {
+                    playerStats.longestStreak = playerStats.currentStreak;
+                }
+            } else {
+                playerStats.currentStreak = 0;
+            }
+            
+            saveStats();
+        }
+
+        function getWinRate() {
+            if (playerStats.totalGames === 0) return 0;
+            return ((playerStats.wins / playerStats.totalGames) * 100).toFixed(0);
+        }
+
+        function openStats() {
+            updateStatsDisplay();
+            document.getElementById('statsPopup').classList.add('active');
+            playSound('click');
+        }
+
+        function closeStats() {
+            document.getElementById('statsPopup').classList.remove('active');
+            playSound('click');
+        }
+
+        function updateStatsDisplay() {
+            const container = document.getElementById('statsSimple');
+            if (!container) return;
+            
+            const winRate = getWinRate();
+            
+            container.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-label"><span>🎮</span> Total Games</div>
+                    <div class="stat-value">${playerStats.totalGames}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>📈</span> Win Rate</div>
+                    <div class="stat-value">${winRate}%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>🪙</span> Coins Earned</div>
+                    <div class="stat-value">${playerStats.totalCoinsEarned}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><span>🔥</span> Longest Streak</div>
+                    <div class="stat-value">${playerStats.longestStreak}</div>
+                </div>
+            `;
+        }
+
+        // ===== DAILY QUESTS =====
+        let dailyQuests = [];
+        let lastQuestReset = '';
+
+        function generateDailyQuests() {
+            const today = new Date().toDateString();
+            
+            if (lastQuestReset !== today) {
+                lastQuestReset = today;
+                
+                const allQuests = [
+                    { id: 'winStreak', name: 'Win Streak', desc: 'Win 3 games in a row', icon: '🔥', target: 3, reward: 50, progress: 0, completed: false },
+                    { id: 'noPower', name: 'No Power-ups', desc: 'Win a game without using power-ups', icon: '💪', target: 1, reward: 75, progress: 0, completed: false },
+                    { id: 'perfect', name: 'Perfect Round', desc: 'Answer all questions correctly', icon: '✨', target: 1, reward: 100, progress: 0, completed: false },
+                    { id: 'quickWin', name: 'Quick Win', desc: 'Win in under 2 minutes', icon: '⚡', target: 1, reward: 50, progress: 0, completed: false },
+                    { id: 'heroMaster', name: 'Hero Master', desc: 'Win with 3 different heroes', icon: '👑', target: 3, reward: 60, progress: 0, completed: false },
+                    { id: 'powerUser', name: 'Power User', desc: 'Use 5 power-ups total', icon: '⚡', target: 5, reward: 40, progress: 0, completed: false }
+                ];
+                
+                dailyQuests = [];
+                const shuffled = [...allQuests].sort(() => 0.5 - Math.random());
+                for (let i = 0; i < 3; i++) {
+                    dailyQuests.push({ ...shuffled[i] });
+                }
+                
+                saveQuestData();
+            }
+            
+            updateQuestsDisplay();
+        }
+
+        function updateQuestsDisplay() {
+            const container = document.getElementById('dailyQuests');
+            if (!container) return;
+            
+            let html = '';
+            dailyQuests.forEach(quest => {
+                const progressPercent = (quest.progress / quest.target) * 100;
+                const completedClass = quest.completed ? 'completed' : '';
+                
+                html += `
+                    <div class="quest-card ${completedClass}">
+                        <div class="quest-icon">${quest.icon}</div>
+                        <div class="quest-info">
+                            <div class="quest-name">${quest.name}</div>
+                            <div class="quest-desc">${quest.desc}</div>
+                            <div class="quest-progress-bar">
+                                <div class="quest-progress-fill" style="width: ${Math.min(progressPercent, 100)}%"></div>
+                            </div>
+                        </div>
+                        <div class="quest-reward">
+                            <span>🪙</span>
+                            <span>${quest.reward}</span>
+                        </div>
+                        <div class="quest-check">✅</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateQuestProgress(questId, increment = 1) {
+            const quest = dailyQuests.find(q => q.id === questId);
+            if (quest && !quest.completed) {
+                quest.progress += increment;
+                if (quest.progress >= quest.target) {
+                    quest.completed = true;
+                    coins += quest.reward;
+                    playerStats.totalCoinsEarned += quest.reward;
+                    saveGameData();
+                    saveStats();
+                    showQuestComplete(quest);
+                }
+                saveQuestData();
+                updateQuestsDisplay();
+            }
+        }
+
+        function showQuestComplete(quest) {
+            const notif = document.createElement('div');
+            notif.className = 'quest-notification';
+            notif.innerHTML = `
+                <div class="quest-notification-icon">🎯</div>
+                <div class="quest-notification-text">
+                    <div class="quest-notification-title">QUEST COMPLETE</div>
+                    <div class="quest-notification-name">${quest.name}</div>
+                    <div class="quest-notification-reward">+${quest.reward} 🪙</div>
+                </div>
+            `;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+
+        function saveQuestData() {
+            localStorage.setItem('dailyQuests', JSON.stringify(dailyQuests));
+            localStorage.setItem('lastQuestReset', lastQuestReset);
+        }
+
+        function loadQuestData() {
+            const saved = localStorage.getItem('dailyQuests');
+            const savedReset = localStorage.getItem('lastQuestReset');
+            if (saved) dailyQuests = JSON.parse(saved);
+            if (savedReset) lastQuestReset = savedReset;
+            generateDailyQuests();
+        }
+
+        // ===== ACHIEVEMENT SYSTEM =====
+        const achievements = [
+            { id: 'firstBlood', name: 'First Blood', desc: 'Win 1 game', icon: '⚔️', title: 'Rookie', titleClass: 'title-rookie', progress: 0, target: 1, unlocked: false },
+            { id: 'veteran', name: 'Veteran', desc: 'Win 10 games', icon: '🛡️', title: 'Warrior', titleClass: 'title-warrior', progress: 0, target: 10, unlocked: false },
+            { id: 'hardcore', name: 'Hardcore Master', desc: 'Win Hard mode 5 times', icon: '🔥', title: 'Legend', titleClass: 'title-legend', progress: 0, target: 5, unlocked: false },
+            { id: 'streakGod', name: 'Streak God', desc: 'Get 5 win streak', icon: '⚡', title: 'Unstoppable', titleClass: 'title-unstoppable', progress: 0, target: 5, unlocked: false },
+            { id: 'perfect', name: 'Perfect Run', desc: 'Answer all questions correctly', icon: '✨', title: 'Perfect', titleClass: 'title-perfect', progress: 0, target: 1, unlocked: false },
+            { id: 'collector', name: 'Collector', desc: 'Buy 10 power-ups from shop', icon: '💰', title: 'Rich', titleClass: 'title-rich', progress: 0, target: 10, unlocked: false },
+            { id: 'pureSkill', name: 'Pure Skill', desc: 'Win without power-ups', icon: '💪', title: 'Pure Skill', titleClass: 'title-pureskill', progress: 0, target: 1, unlocked: false }
+        ];
+
+        let unlockedTitles = [];
+        let selectedTitle = null;
+
+        function openAchievements() {
+            updateAchievementsGrid();
+            document.getElementById('achievementPopup').classList.add('active');
+            playSound('click');
+        }
+
+        function closeAchievements() {
+            document.getElementById('achievementPopup').classList.remove('active');
+            playSound('click');
+        }
+
+        function updateAchievementsGrid() {
+            const grid = document.getElementById('achievementsGrid');
+            if (!grid) return;
+            
+            let html = '';
+            achievements.forEach(ach => {
+                let cardClass = 'achievement-card';
+                if (ach.unlocked) {
+                    cardClass += ' completed';
+                    if (selectedTitle === ach.title) {
+                        cardClass += ' equipped';
+                    }
+                }
+                
+                html += `
+                    <div class="${cardClass}">
+                        <div class="achievement-icon">${ach.icon}</div>
+                        <div class="achievement-name">${ach.name}</div>
+                        <div class="achievement-desc">${ach.desc}</div>
+                        ${ach.unlocked ? 
+                            `<div class="achievement-title ${ach.titleClass}">${ach.title}</div>` : 
+                            `<div style="color:rgba(255,255,255,0.5); font-size:0.7rem;">${ach.progress}/${ach.target}</div>`
+                        }
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function showAchievementUnlock(achievement) {
+            showMessage(`🏆 ACHIEVEMENT UNLOCKED: ${achievement.name}!`);
+        }
+
+        // ===== TITLE FUNCTIONS =====
+        function openTitles() {
+            updateTitlesGrid();
+            document.getElementById('titlePopup').classList.add('active');
+            playSound('click');
+        }
+
+        function closeTitles() {
+            document.getElementById('titlePopup').classList.remove('active');
+            playSound('click');
+        }
+
+        function updateTitlesGrid() {
+            const grid = document.getElementById('titlesGrid');
+            if (!grid) return;
+            
+            let html = '';
+            achievements.forEach(ach => {
+                const isUnlocked = unlockedTitles.includes(ach.title);
+                const isSelected = selectedTitle === ach.title;
+                
+                let cardClass = 'title-card';
+                if (!isUnlocked) cardClass += ' locked';
+                else if (isSelected) cardClass += ' equipped';
+                else cardClass += ' unlocked';
+                
+                html += `
+                    <div class="${cardClass}" onclick="${isUnlocked ? `selectTitle('${ach.title}')` : ''}">
+                        <div class="title-preview ${ach.titleClass}">${ach.title}</div>
+                        <div class="title-name">${ach.name}</div>
+                        <div class="title-from">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function selectTitle(title) {
+            selectedTitle = title;
+            saveGameData();
+            updateCurrentTitleDisplay();
+            updateBattleTitle();
+            updateTitlesGrid();
+            updateAchievementsGrid();
+            showMessage(`👑 Title selected: ${title}`);
+            playSound('click');
+        }
+
+        function updateCurrentTitleDisplay() {
+            const titleDisplay = document.getElementById('currentTitleDisplay');
+            if (!titleDisplay) return;
+            
+            if (selectedTitle) {
+                const achievement = achievements.find(a => a.title === selectedTitle);
+                if (achievement) {
+                    titleDisplay.innerHTML = `<span class="${achievement.titleClass}">${selectedTitle}</span>`;
+                }
+            } else {
+                titleDisplay.innerHTML = 'No title selected';
+            }
+        }
+
+        function updateBattleTitle() {
+            const battleTitleDisplay = document.getElementById('playerTitleDisplay');
+            if (!battleTitleDisplay) return;
+            
+            if (selectedTitle) {
+                const achievement = achievements.find(a => a.title === selectedTitle);
+                if (achievement) {
+                    battleTitleDisplay.innerHTML = `<span class="${achievement.titleClass}">${selectedTitle}</span>`;
+                    battleTitleDisplay.style.display = 'block';
+                }
+            } else {
+                battleTitleDisplay.style.display = 'none';
+            }
+        }
+
+        // ===== SHOP FUNCTIONS =====
+        function openShop() {
+            document.getElementById('shopCoinDisplay').textContent = coins;
+            document.getElementById('shopPopup').classList.add('active');
+            playSound('click');
+        }
+
+        function closeShop() {
+            document.getElementById('shopPopup').classList.remove('active');
+            playSound('click');
+        }
+
+        function buyItem(itemType, price) {
+            if (coins >= price) {
+                coins -= price;
+                inventory[itemType]++;
+                
+                // Update collector achievement
+                const collectorAchievement = achievements.find(a => a.id === 'collector');
+                if (collectorAchievement && !collectorAchievement.unlocked) {
+                    collectorAchievement.progress++;
+                    if (collectorAchievement.progress >= collectorAchievement.target) {
+                        collectorAchievement.unlocked = true;
+                        unlockedTitles.push(collectorAchievement.title);
+                        showAchievementUnlock(collectorAchievement);
+                    }
+                }
+                
+                saveGameData();
+                updatePowerupDisplay();
+                document.getElementById('shopCoinDisplay').textContent = coins;
+                showMessage(`✅ +1 ${itemType === 'time' ? 'Time Freeze' : itemType === 'health' ? 'Health Potion' : 'Smart Hint'}!`);
+                playSound('click');
+            } else {
+                showMessage('❌ Not enough coins!');
+                playSound('wrong');
+            }
+        }
+
+        // ===== LEVEL SYSTEM =====
+        let currentLevel = 'easy';
+        let powerupsAllowed = true;
+
+        const levelEasy = document.getElementById('levelEasy');
+        const levelMedium = document.getElementById('levelMedium');
+        const levelHard = document.getElementById('levelHard');
+        const powerupCards = document.querySelectorAll('.powerup-card');
+        const warningElements = document.querySelectorAll('.hard-mode-warning');
+
+        function setLevel(level) {
+            currentLevel = level;
+            
+            [levelEasy, levelMedium, levelHard].forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            powerupCards.forEach(card => {
+                card.classList.remove('hard-disabled');
+                card.classList.remove('selected');
+                card.style.pointerEvents = 'auto';
+            });
+            
+            warningElements.forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            if (level === 'easy') {
+                levelEasy.classList.add('selected');
+                powerupsAllowed = true;
+                showMessage('🌍 Easy Mode: Power-ups enabled');
+            }
+            if (level === 'medium') {
+                levelMedium.classList.add('selected');
+                powerupsAllowed = true;
+                showMessage('🌍 Medium Mode: Power-ups enabled');
+            }
+            if (level === 'hard') {
+                levelHard.classList.add('selected');
+                powerupsAllowed = false;
+                
+                powerupCards.forEach(card => {
+                    card.classList.add('hard-disabled');
+                    card.classList.remove('selected');
+                });
+                
+                warningElements.forEach(el => {
+                    el.style.display = 'block';
+                });
+                
+                selectedPowerup = null;
+                
+                showMessage('🔥 Hard Mode: Power-ups disabled! >:)');
+            }
+        }
+
+        levelEasy.addEventListener('click', () => setLevel('easy'));
+        levelMedium.addEventListener('click', () => setLevel('medium'));
+        levelHard.addEventListener('click', () => setLevel('hard'));
+        setLevel('easy');
+
+        // ===== QUESTIONS =====
+        const questionsByLevel = {
+            easy: [
+                { question: "What does CPU stand for?", options: ["Central Process Unit", "Central Processing Unit", "Computer Personal Unit", "Control Processing User"], correct: 1 },
+                { question: "Which of the following is an input device?", options: ["Monitor", "Printer", "Keyboard", "Speaker"], correct: 2 },
+                { question: "What is the main function of RAM?", options: ["Store data permanently", "Process graphics", "Store data temporarily", "Control the internet"], correct: 2 },
+                { question: "Windows operating system was developed by which company?", options: ["Apple", "Microsoft", "Google", "IBM"], correct: 1 },
+                { question: "Which of the following is an output device?", options: ["Mouse", "Scanner", "Monitor", "Keyboard"], correct: 2 },
+                { question: "A programming language is used to:", options: ["Decorate a computer", "Create programs", "Open the internet", "Install hardware"], correct: 1 },
+                { question: "Which of the following is secondary storage?", options: ["RAM", "Cache", "Hard Disk", "Register"], correct: 2 },
+                { question: "What does WWW stand for?", options: ["World Wide Web", "World Web Wide", "Web World Wide", "Wide Web World"], correct: 0 },
+                { question: "Which device is used to print documents?", options: ["Speaker", "Printer", "Monitor", "Router"], correct: 1 },
+                { question: "What is the function of a mouse?", options: ["Type text", "Move the cursor", "Print files", "Store data"], correct: 1 }
+            ],
+            medium: [
+                { question: "What is the brain of the computer?", options: ["RAM", "Hard Disk", "CPU", "Monitor"], correct: 2 },
+                { question: "Which number system does a computer use?", options: ["Decimal", "Binary", "Octal", "Roman"], correct: 1 },
+                { question: "What is an example of an operating system?", options: ["Microsoft Word", "Google Chrome", "Linux", "PowerPoint"], correct: 2 },
+                { question: "What does HTML stand for?", options: ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Hyper Text Marketing Language", "Hyper Tool Multi Language"], correct: 1 },
+                { question: "Which of the following is a programming language?", options: ["Windows", "Python", "Intel", "Chrome"], correct: 1 },
+                { question: "What is the function of a router?", options: ["Print documents", "Connect devices to a network", "Store files", "Display images"], correct: 1 },
+                { question: "What is a file extension for a Word document?", options: [".mp3", ".jpg", ".docx", ".exe"], correct: 2 },
+                { question: "Which component performs calculations?", options: ["ALU", "Monitor", "Keyboard", "Speaker"], correct: 0 },
+                { question: "What does URL stand for?", options: ["Universal Resource Locator", "Uniform Resource Locator", "Unique Resource Link", "Universal Reference Link"], correct: 1 },
+                { question: "What is software?", options: ["Physical parts of a computer", "Programs and applications", "Computer cables", "Hardware tools"], correct: 1 }
+            ],
+            hard: [
+                { question: "Which of the following is volatile memory?", options: ["ROM", "Hard Disk", "RAM", "SSD"], correct: 2 },
+                { question: "What is the purpose of an algorithm?", options: ["Store data", "Solve a problem step-by-step", "Connect to the internet", "Print documents"], correct: 1 },
+                { question: "What does SQL stand for?", options: ["Structured Query Language", "Simple Query Language", "Sequential Question Language", "System Query Logic"], correct: 0 },
+                { question: "In programming, what is a loop used for?", options: ["Store images", "Repeat a block of code", "End a program", "Delete data"], correct: 1 },
+                { question: "What is the function of the operating system?", options: ["Only play games", "Manage hardware and software", "Create viruses", "Design websites"], correct: 1 },
+                { question: "Which of the following is an example of open-source software?", options: ["Windows", "macOS", "Linux", "Microsoft Office"], correct: 2 },
+                { question: "What does IP stand for in networking?", options: ["Internet Process", "Internal Program", "Internet Protocol", "Information Path"], correct: 2 },
+                { question: "What is encryption used for?", options: ["Speed up the computer", "Protect data", "Delete viruses", "Install programs"], correct: 1 },
+                { question: "What is the full form of HTTP?", options: ["HyperText Transfer Protocol", "HighText Transfer Program", "Hyper Transfer Text Process", "High Transfer Text Protocol"], correct: 0 },
+                { question: "Which data structure works on FIFO (First In, First Out)?", options: ["Stack", "Queue", "Tree", "Graph"], correct: 1 }
+            ]
+        };
+
+        // ===== SOUND MANAGER =====
+        const sounds = {
+            bgMenu: null,
+            bgQuiz: null,
+            countdown: null,
+            correct: null,
+            wrong: null,
+            click: null,
+            win: null,
+            lose: null,
+            timeup: null
+        };
+
+        let isMuted = false;
+        const volumeToggle = document.getElementById('volumeToggle');
+        const volumeIcon = document.getElementById('volumeIcon');
+        
+        function setMasterVolume(volume) {
+            if (sounds.bgMenu) sounds.bgMenu.volume = volume;
+            if (sounds.bgQuiz) sounds.bgQuiz.volume = volume;
+            if (sounds.countdown) sounds.countdown.volume = volume;
+            if (sounds.correct) sounds.correct.volume = volume;
+            if (sounds.wrong) sounds.wrong.volume = volume;
+            if (sounds.click) sounds.click.volume = volume;
+            if (sounds.win) sounds.win.volume = volume;
+            if (sounds.lose) sounds.lose.volume = volume;
+            if (sounds.timeup) sounds.timeup.volume = volume;
+        }
+        
+        function toggleMute() {
+            isMuted = !isMuted;
+            
+            if (isMuted) {
+                setMasterVolume(0);
+                volumeIcon.textContent = '🔇';
+            } else {
+                setMasterVolume(0.5);
+                volumeIcon.textContent = '🔊';
+                
+                if (sounds.bgMenu && sounds.bgMenu.paused && musicStarted) {
+                    sounds.bgMenu.play().catch(e => console.log('Play error:', e));
+                }
+            }
+        }
+        
+        volumeToggle.addEventListener('click', toggleMute);
+        
+        function initSounds() {
+            sounds.countdown = new Audio('sounds/countdown-full.mp3');
+            sounds.countdown.volume = 0.7;
+            
+            sounds.correct = new Audio('sounds/correct.mp3');
+            sounds.wrong = new Audio('sounds/wrong.mp3');
+            sounds.click = new Audio('sounds/click.mp3');
+            sounds.win = new Audio('sounds/win.mp3');
+            sounds.lose = new Audio('sounds/lose.mp3');
+            sounds.timeup = new Audio('sounds/timeup.mp3');
+            
+            sounds.bgMenu = new Audio('sounds/bg-menu.mp3');
+            sounds.bgMenu.loop = true;
+            
+            sounds.bgQuiz = new Audio('sounds/bg-quiz.mp3');
+            sounds.bgQuiz.loop = true;
+            
+            if (!isMuted) {
+                setMasterVolume(0.5);
+            } else {
+                setMasterVolume(0);
+            }
+        }
+
+        function playSound(soundName) {
+            if (!sounds.bgMenu) {
+                initSounds();
+            }
+            
+            if (isMuted) return;
+            
+            try {
+                if (soundName === 'bgMenu') {
+                    if (sounds.bgMenu) {
+                        if (sounds.bgQuiz) {
+                            sounds.bgQuiz.pause();
+                            sounds.bgQuiz.currentTime = 0;
+                        }
+                        sounds.bgMenu.play().catch(e => console.log('Menu music error:', e));
+                    }
+                } else if (soundName === 'bgQuiz') {
+                    if (sounds.bgQuiz) {
+                        if (sounds.bgMenu) {
+                            sounds.bgMenu.pause();
+                            sounds.bgMenu.currentTime = 0;
+                        }
+                        sounds.bgQuiz.play().catch(e => console.log('Quiz music error:', e));
+                    }
+                } else {
+                    const sound = sounds[soundName];
+                    if (sound) {
+                        sound.currentTime = 0;
+                        sound.play().catch(e => console.log('Sound error:', e));
+                    }
+                }
+            } catch (e) {
+                console.log('Sound play failed:', e);
+            }
+        }
+        
+        function stopAllMusic() {
+            if (sounds.bgMenu) {
+                sounds.bgMenu.pause();
+                sounds.bgMenu.currentTime = 0;
+            }
+            if (sounds.bgQuiz) {
+                sounds.bgQuiz.pause();
+                sounds.bgQuiz.currentTime = 0;
+            }
+        }
+
+        document.body.addEventListener('click', function startMusicOnFirstClick() {
+            if (!musicStarted) {
+                if (!sounds.bgMenu) {
+                    initSounds();
+                }
+                playSound('bgMenu');
+                musicStarted = true;
+                console.log('Music started by user click');
+            }
+        }, { once: true });
+
+        // ===== TUTORIAL FUNCTIONS =====
+        function openTutorial() {
+            document.getElementById('tutorialPopup').classList.add('active');
+            playSound('click');
+        }
+
+        function closeTutorial() {
+            document.getElementById('tutorialPopup').classList.remove('active');
+            playSound('click');
+        }
+
+        // ===== BACKGROUND EFFECTS =====
+        function createBackgroundEffects() {
+            const orbsContainer = document.getElementById('glowOrbs');
+            if (orbsContainer) {
+                const orbColors = [
+                    'rgba(100, 150, 255, 0.25)',
+                    'rgba(200, 130, 255, 0.25)',
+                    'rgba(100, 255, 200, 0.2)',
+                    'rgba(255, 150, 200, 0.2)'
+                ];
+                
+                for (let i = 0; i < 6; i++) {
+                    const orb = document.createElement('div');
+                    orb.className = 'orb';
+                    
+                    const size = Math.random() * 250 + 150;
+                    orb.style.width = size + 'px';
+                    orb.style.height = size + 'px';
+                    
+                    orb.style.left = Math.random() * 100 + '%';
+                    orb.style.top = Math.random() * 100 + '%';
+                    
+                    orb.style.background = orbColors[Math.floor(Math.random() * orbColors.length)];
+                    orb.style.animationDelay = Math.random() * 10 + 's';
+                    
+                    orbsContainer.appendChild(orb);
+                }
+            }
+            
+            const particlesContainer = document.getElementById('particles');
+            if (particlesContainer) {
+                for (let i = 0; i < 40; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    const size = Math.random() * 5 + 1;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    
+                    particle.style.left = Math.random() * 100 + '%';
+                    
+                    const duration = Math.random() * 15 + 8;
+                    particle.style.animationDuration = duration + 's';
+                    
+                    particle.style.animationDelay = Math.random() * 5 + 's';
+                    
+                    const colors = ['rgba(255,255,255,0.6)', 'rgba(180,220,255,0.6)', 'rgba(210,180,255,0.6)'];
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+        }
+
+        // ===== LEADERBOARD =====
+        const enemyNames = ["BUG LORD", "SYNTAX ERROR", "NULL POINTER", "CRASH AGENT"];
+        let leaderboard = [];
+
+        function loadLeaderboard() {
+            const saved = localStorage.getItem('csQuizLeaderboard');
+            if (saved) {
+                try {
+                    leaderboard = JSON.parse(saved);
+                } catch(e) {
+                    leaderboard = [
+                        { name: "CyberWiz", score: 2450 },
+                        { name: "DebugMaster", score: 2120 },
+                        { name: "BitHunter", score: 1980 },
+                        { name: "CodeNinja", score: 1750 },
+                        { name: "SyntaxPro", score: 1620 }
+                    ];
+                }
+            } else {
+                leaderboard = [
+                    { name: "CyberWiz", score: 2450 },
+                    { name: "DebugMaster", score: 2120 },
+                    { name: "BitHunter", score: 1980 },
+                    { name: "CodeNinja", score: 1750 },
+                    { name: "SyntaxPro", score: 1620 }
+                ];
+            }
+            updateLeaderboardDisplay();
+        }
+
+        function saveLeaderboard() {
+            localStorage.setItem('csQuizLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function updateLeaderboardDisplay() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            if (!leaderboardList) return;
+            
+            let html = '';
+            leaderboard.sort((a,b) => b.score - a.score).slice(0, 5).forEach((entry, index) => {
+                let rankClass = 'default';
+                if (index === 0) rankClass = 'gold';
+                else if (index === 1) rankClass = 'silver';
+                else if (index === 2) rankClass = 'bronze';
+                
+                html += `
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank ${rankClass}">${index + 1}</span>
+                        <span class="leaderboard-name">${entry.name}</span>
+                        <span class="leaderboard-score">${entry.score}</span>
+                    </div>
+                `;
+            });
+            
+            leaderboardList.innerHTML = html;
+        }
+
+        window.showFullLeaderboard = function() {
+            const listDiv = document.getElementById('fullLeaderboardList');
+            let html = '';
+            leaderboard.sort((a,b) => b.score - a.score).forEach((entry, index) => {
+                let medalEmoji = '';
+                if (index === 0) medalEmoji = '🥇';
+                else if (index === 1) medalEmoji = '🥈';
+                else if (index === 2) medalEmoji = '🥉';
+                
+                html += `
+                    <div style="display: flex; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 8px;">
+                        <span style="width: 50px; font-size: 1.2rem; font-weight: 800; color: ${index === 0 ? '#ffd700' : (index === 1 ? '#c0c0c0' : (index === 2 ? '#cd7f32' : 'white'))};">${medalEmoji || index+1}</span>
+                        <span style="flex: 1; color: white; font-weight: 600;">${entry.name}</span>
+                        <span style="background: rgba(255,170,0,0.2); padding: 5px 15px; border-radius: 20px; color: #ffaa00; font-weight: 700;">${entry.score}</span>
+                    </div>
+                `;
+            });
+            listDiv.innerHTML = html;
+            document.getElementById('leaderboardPopup').classList.add('active');
+            playSound('click');
+        };
+
+        window.closeLeaderboard = function() {
+            document.getElementById('leaderboardPopup').classList.remove('active');
+            playSound('click');
+        };
+
+        function addScoreToLeaderboard(name, score) {
+            leaderboard.push({ name, score });
+            leaderboard.sort((a,b) => b.score - a.score);
+            if (leaderboard.length > 20) leaderboard = leaderboard.slice(0, 20);
+            saveLeaderboard();
+            updateLeaderboardDisplay();
+        }
+
+        // ===== POWER-UP SELECTION =====
+        powerupCards.forEach(card => {
+            card.addEventListener('click', function() {
+                if (currentLevel === 'hard') {
+                    showMessage('❌ You can\'t use this in HARD mode! >:)');
+                    playSound('wrong');
+                    return;
+                }
+                
+                powerupCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPowerup = this.dataset.powerup;
+                playSound('click');
+                showMessage(`🔋 ${this.querySelector('.powerup-name').textContent} selected!`);
+            });
+        });
+
+        function updatePowerupDisplay() {
+            document.getElementById('timeCount').textContent = inventory.time;
+            document.getElementById('healthCount').textContent = inventory.health;
+            document.getElementById('hintCount').textContent = inventory.hint;
+            document.getElementById('battleTimeCount').textContent = inventory.time;
+            document.getElementById('battleHealthCount').textContent = inventory.health;
+            document.getElementById('battleHintCount').textContent = inventory.hint;
+            updatePowerButtonStatus();
+        }
+
+        function updatePowerButtonStatus() {
+            const timeBtn = document.getElementById('battlePowerupTime');
+            const healthBtn = document.getElementById('battlePowerupHealth');
+            const hintBtn = document.getElementById('battlePowerupHint');
+            
+            [timeBtn, healthBtn, hintBtn].forEach(btn => btn.classList.remove('ready', 'cooldown', 'disabled'));
+            
+            if (currentLevel === 'hard') {
+                timeBtn.classList.add('disabled');
+                healthBtn.classList.add('disabled');
+                hintBtn.classList.add('disabled');
+                return;
+            }
+            
+            if (selectedPowerup === 'time' && inventory.time > 0) {
+                timeBtn.classList.add('ready');
+            } else {
+                timeBtn.classList.add('disabled');
+            }
+            
+            if (selectedPowerup === 'health' && inventory.health > 0) {
+                healthBtn.classList.add('ready');
+            } else {
+                healthBtn.classList.add('disabled');
+            }
+            
+            if (selectedPowerup === 'hint' && inventory.hint > 0) {
+                hintBtn.classList.add('ready');
+            } else {
+                hintBtn.classList.add('disabled');
+            }
+        }
+
+        function startCountdown(callback) {
+            const overlay = document.getElementById('countdownOverlay');
+            const numberEl = document.getElementById('countdownNumber');
+            const textEl = document.getElementById('countdownText');
+            
+            let count = 3;
+            
+            overlay.classList.add('active');
+            
+            playSound('countdown');
+            
+            function updateCountdown() {
+                if (count > 0) {
+                    numberEl.textContent = count;
+                    textEl.textContent = count === 3 ? 'Get Ready!' : (count === 2 ? 'Almost There!' : 'Fight!');
+                    count--;
+                    setTimeout(updateCountdown, 800);
+                } else {
+                    numberEl.style.fontSize = '6rem';
+                    numberEl.textContent = '⚔️';
+                    textEl.textContent = 'LET BEGIN!';
+                    textEl.style.fontSize = '5rem';
+                    
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        numberEl.style.fontSize = '12rem';
+                        textEl.style.fontSize = '4rem';
+                        callback();
+                    }, 1000);
+                }
+            }
+            
+            setTimeout(updateCountdown, 100);
+        }
+
+        // ===== POWER-UP FUNCTIONS =====
+        function useTimeFreeze() {
+            if (currentLevel === 'hard') {
+                showMessage('❌ You can\'t use this in HARD mode! >:)');
+                playSound('wrong');
+                return;
+            }
+            if (selectedPowerup !== 'time') return;
+            
+            if (inventory.time <= 0) {
+                showMessage('❌ No Time Freeze left!');
+                playSound('wrong');
+                return;
+            }
+            
+            inventory.time--;
+            powerupsUsed++;
+            saveGameData();
+            updatePowerupDisplay();
+            
+            if (powerupCooldown) return;
+            powerupCooldown = true;
+            
+            playSound('click');
+            clearInterval(timerInterval);
+            showMessage('⏸️ TIME FREEZE! 4 SECONDS STOP!');
+            
+            setTimeout(() => {
+                resetTimer();
+                
+                const btn = document.getElementById('battlePowerupTime');
+                btn.classList.remove('ready');
+                btn.classList.add('cooldown');
+                
+                setTimeout(() => {
+                    powerupCooldown = false;
+                    updatePowerButtonStatus();
+                }, 5000);
+            }, 4000);
+        }
+
+        function useHealthPotion() {
+            if (currentLevel === 'hard') {
+                showMessage('❌ You can\'t use this in HARD mode! >:)');
+                playSound('wrong');
+                return;
+            }
+            if (selectedPowerup !== 'health') return;
+            
+            if (playerHP > 80) {
+                showMessage('❌ You cannot use Health Potion because your health is above 80%!');
+                playSound('wrong');
+                return;
+            }
+            
+            if (inventory.health <= 0) {
+                showMessage('❌ No Health Potion left!');
+                playSound('wrong');
+                return;
+            }
+            
+            inventory.health--;
+            powerupsUsed++;
+            saveGameData();
+            updatePowerupDisplay();
+            
+            if (powerupCooldown) return;
+            powerupCooldown = true;
+            
+            playSound('correct');
+            document.body.classList.add('heal-active');
+            playerHP = Math.min(playerHP + 7, 100);
+            updateHealthBars();
+            showMessage('❤️ +7% HP!');
+            
+            setTimeout(() => {
+                document.body.classList.remove('heal-active');
+            }, 1000);
+            
+            const btn = document.getElementById('battlePowerupHealth');
+            btn.classList.remove('ready');
+            btn.classList.add('cooldown');
+            
+            setTimeout(() => {
+                powerupCooldown = false;
+                updatePowerButtonStatus();
+            }, 5000);
+        }
+
+        function useHint() {
+            if (currentLevel === 'hard') {
+                showMessage('❌ You can\'t use this in HARD mode! >:)');
+                playSound('wrong');
+                return;
+            }
+            if (selectedPowerup !== 'hint') return;
+            
+            if (inventory.hint <= 0) {
+                showMessage('❌ No Smart Hint left!');
+                playSound('wrong');
+                return;
+            }
+            
+            inventory.hint--;
+            powerupsUsed++;
+            saveGameData();
+            updatePowerupDisplay();
+            
+            if (powerupCooldown) return;
+            powerupCooldown = true;
+            
+            playSound('click');
+            
+            const q = questionsByLevel[currentLevel][currentQuestionIndex];
+            const answerBtns = document.querySelectorAll('.answer-btn');
+            const wrongIndices = [];
+            answerBtns.forEach((btn, idx) => {
+                if (btn.dataset.correct === 'false') wrongIndices.push(idx);
+            });
+            const keepWrong = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
+            answerBtns.forEach((btn, idx) => {
+                if (btn.dataset.correct === 'false' && idx !== keepWrong) {
+                    btn.style.opacity = '0.3';
+                    btn.style.pointerEvents = 'none';
+                }
+            });
+            
+            showMessage('💡 50-50 ACTIVATED!');
+            
+            const btn = document.getElementById('battlePowerupHint');
+            btn.classList.remove('ready');
+            btn.classList.add('cooldown');
+            
+            setTimeout(() => {
+                powerupCooldown = false;
+                updatePowerButtonStatus();
+            }, 5000);
+        }
+
+        function showMessage(msg) {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = 'rgba(255,255,255,0.2)';
+            toast.style.backdropFilter = 'blur(10px)';
+            toast.style.border = '1px solid rgba(255,255,255,0.3)';
+            toast.style.color = 'white';
+            toast.style.padding = '8px 20px';
+            toast.style.borderRadius = '10px';
+            toast.style.fontWeight = '600';
+            toast.style.zIndex = '3000';
+            toast.style.boxShadow = '0 0 20px rgba(255,255,255,0.3)';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // ===== PAGE NAVIGATION =====
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const page3 = document.getElementById('page3');
+        const resultPopup = document.getElementById('resultPopup');
+        const popupContent = document.getElementById('popupContent');
+
+        const heroCards = document.querySelectorAll('.hero-card');
+        const continueBtn = document.getElementById('continueBtn');
+
+        heroCards.forEach(card => {
+            card.addEventListener('click', function() {
+                heroCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const imgSrc = this.querySelector('img') ? this.querySelector('img').src : '';
+                
+                selectedHero = {
+                    name: this.dataset.hero,
+                    img: imgSrc,
+                    fullName: this.querySelector('.hero-name').textContent
+                };
+                continueBtn.disabled = false;
+                playSound('click');
+            });
+        });
+
+        // DAILY REWARD
+        document.getElementById('claimDailyBtn').addEventListener('click', function() {
+            if (!dailyClaimed) {
+                dailyClaimed = true;
+                const randomCoins = Math.floor(Math.random() * 151) + 50;
+                coins += randomCoins;
+                playerStats.totalCoinsEarned += randomCoins;
+                saveGameData();
+                saveStats();
+                updatePowerupDisplay();
+                this.textContent = 'CLAIMED';
+                this.disabled = true;
+                showMessage(`🎁 +${randomCoins} COINS CLAIMED!`);
+                playSound('click');
+            }
+            playSound('click');
+        });
+
+        // MENU BUTTONS
+        document.getElementById('infoBtn').addEventListener('click', openTutorial);
+        document.getElementById('openShopBtn').addEventListener('click', openShop);
+        document.getElementById('openAchievementBtn').addEventListener('click', openAchievements);
+        document.getElementById('openTitleBtn').addEventListener('click', openTitles);
+        document.getElementById('openStatsBtn').addEventListener('click', openStats);
+
+        continueBtn.addEventListener('click', () => {
+            playSound('click');
+            page1.classList.remove('active');
+            page2.classList.add('active');
+        });
+
+        const nameInput = document.getElementById('playerName');
+        const startBattleBtn = document.getElementById('startBattleBtn');
+        const backToHeroBtn = document.getElementById('backToHeroBtn');
+
+        nameInput.addEventListener('input', function() {
+            playerName = this.value.trim();
+            startBattleBtn.disabled = playerName === '';
+        });
+
+        nameInput.addEventListener('focus', function() {
+            playSound('click');
+        });
+
+        startBattleBtn.addEventListener('click', () => {
+            playSound('click');
+            if (playerName && selectedHero) {
+                stopAllMusic();
+                gameStartTime = Date.now();
+                powerupsUsed = 0;
+                startCountdown(() => {
+                    startBattle();
+                });
+            }
+        });
+
+        backToHeroBtn.addEventListener('click', () => {
+            playSound('click');
+            page2.classList.remove('active');
+            page1.classList.add('active');
+        });
+
+        function startBattle() {
+            playerHP = 100;
+            score = 0;
+            currentQuestionIndex = 0;
+            canAnswer = true;
+            powerupCooldown = false;
+            
+            const playerAvatar = document.getElementById('playerAvatar');
+            if (selectedHero.img) {
+                playerAvatar.innerHTML = `<img src="${selectedHero.img}" alt="${selectedHero.fullName}">`;
+            } else {
+                playerAvatar.textContent = '⚔️';
+            }
+            
+            document.getElementById('playerNameDisplay').textContent = playerName.toUpperCase();
+            document.getElementById('enemyName').textContent = enemyNames[Math.floor(Math.random() * enemyNames.length)];
+            
+            updateHealthBars();
+            document.getElementById('scoreDisplay').textContent = '0';
+            updatePowerupDisplay();
+            
+            document.getElementById('battlePowerupTime').onclick = useTimeFreeze;
+            document.getElementById('battlePowerupHealth').onclick = useHealthPotion;
+            document.getElementById('battlePowerupHint').onclick = useHint;
+            
+            page2.classList.remove('active');
+            page3.classList.add('active');
+            
+            playSound('bgQuiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const levelQuestions = questionsByLevel[currentLevel];
+            
+            if (currentQuestionIndex >= levelQuestions.length) { 
+                endGame(true); 
+                return; 
+            }
+            
+            const q = levelQuestions[currentQuestionIndex];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('questionCounter').textContent = `${currentQuestionIndex + 1}/${levelQuestions.length}`;
+            
+            const answerGrid = document.getElementById('answerGrid');
+            answerGrid.innerHTML = '';
+            
+            q.options.forEach((text, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'answer-btn';
+                btn.textContent = text;
+                btn.dataset.correct = idx === q.correct;
+                btn.onclick = function() { if (canAnswer) checkAnswer(this); };
+                answerGrid.appendChild(btn);
+            });
+            
+            timeLeft = 10;
+            document.getElementById('timer').textContent = timeLeft;
+            resetTimer();
+        }
+
+        function showDamage(amount) {
+            const rect = document.querySelector('.player-area').getBoundingClientRect();
+            const d = document.createElement('div');
+            d.style.position = 'fixed';
+            d.style.color = 'white';
+            d.style.fontSize = '1.8rem';
+            d.style.fontWeight = '900';
+            d.style.left = rect.left + 30 + 'px';
+            d.style.top = rect.top + 30 + 'px';
+            d.style.zIndex = '3000';
+            d.style.textShadow = '0 0 20px rgba(255,71,87,0.8)';
+            d.style.animation = 'floatUp 1s forwards';
+            d.textContent = `-${amount}`;
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), 1000);
+        }
+
+        function checkAnswer(btn) {
+            if (!canAnswer) return;
+            canAnswer = false;
+            clearInterval(timerInterval);
+            
+            const isCorrect = btn.dataset.correct === 'true';
+            document.querySelectorAll('.answer-btn').forEach(b => b.style.pointerEvents = 'none');
+            
+            const avatar = document.getElementById('playerAvatar');
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                let points = 100;
+                if (selectedHero.name === 'goblin') points = 200;
+                if (selectedHero.name === 'swordsman') points = 120;
+                score += points;
+                document.getElementById('scoreDisplay').textContent = score;
+                
+                avatar.classList.add('attacking');
+                setTimeout(() => avatar.classList.remove('attacking'), 500);
+                playSound('correct');
+                
+            } else {
+                btn.classList.add('wrong');
+                let damage = 20;
+                playerHP -= damage;
+                if (playerHP < 0) playerHP = 0;
+                showDamage(damage);
+                
+                avatar.classList.add('hit');
+                setTimeout(() => avatar.classList.remove('hit'), 500);
+                playSound('wrong');
+                
+                updateHealthBars();
+                if (playerHP <= 0) { endGame(false); return; }
+            }
+            
+            updateHealthBars();
+            setTimeout(() => {
+                currentQuestionIndex++;
+                canAnswer = true;
+                loadQuestion();
+            }, 1000);
+        }
+
+        function updateHealthBars() {
+            document.getElementById('playerHealthBar').style.width = playerHP + '%';
+            document.getElementById('playerHealthText').textContent = playerHP + '%';
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                const timerCircle = document.querySelector('.timer-circle');
+                timerCircle.classList.remove('urgent-3', 'urgent-2', 'urgent-1');
+                
+                if (timeLeft <= 3 && timeLeft > 2) {
+                    timerCircle.classList.add('urgent-3');
+                } else if (timeLeft <= 2 && timeLeft > 1) {
+                    timerCircle.classList.add('urgent-2');
+                } else if (timeLeft <= 1 && timeLeft > 0) {
+                    timerCircle.classList.add('urgent-1');
+                } else if (timeLeft <= 0) {
+                    timerCircle.classList.remove('urgent-3', 'urgent-2', 'urgent-1');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerCircle.classList.remove('urgent-3', 'urgent-2', 'urgent-1');
+                    
+                    if (canAnswer) {
+                        canAnswer = false;
+                        document.querySelectorAll('.answer-btn').forEach(b => b.style.pointerEvents = 'none');
+                        let damage = 20;
+                        playerHP -= damage;
+                        if (playerHP < 0) playerHP = 0;
+                        showDamage(damage);
+                        updateHealthBars();
+                        playSound('timeup');
+                        
+                        if (playerHP <= 0) { endGame(false); return; }
+                        setTimeout(() => {
+                            currentQuestionIndex++;
+                            canAnswer = true;
+                            loadQuestion();
+                        }, 1000);
+                    }
+                }
+            }, 1000);
+        }
+
+        function endGame(isWin) {
+            clearInterval(timerInterval);
+            if (score > 0) addScoreToLeaderboard(playerName, score);
+            
+            stopAllMusic();
+            
+            if (isWin) {
+                coins += 20;
+                playerStats.totalCoinsEarned += 20;
+                
+                // Update quest progress
+                updateQuestProgress('winStreak');
+                
+                if (powerupsUsed === 0) {
+                    updateQuestProgress('noPower');
+                }
+                
+                if (playerHP === 100 && currentQuestionIndex === questionsByLevel[currentLevel].length) {
+                    updateQuestProgress('perfect');
+                }
+                
+                const gameTime = Date.now() - gameStartTime;
+                if (gameTime < 120000) {
+                    updateQuestProgress('quickWin');
+                }
+                
+                if (!heroesUsed.includes(selectedHero.name)) {
+                    heroesUsed.push(selectedHero.name);
+                    if (heroesUsed.length >= 3) {
+                        updateQuestProgress('heroMaster');
+                    }
+                }
+                
+                if (powerupsUsed > 0) {
+                    updateQuestProgress('powerUser', powerupsUsed);
+                }
+                
+                // Update achievements
+                const firstBloodAchievement = achievements.find(a => a.id === 'firstBlood');
+                if (firstBloodAchievement && !firstBloodAchievement.unlocked) {
+                    firstBloodAchievement.progress++;
+                    if (firstBloodAchievement.progress >= firstBloodAchievement.target) {
+                        firstBloodAchievement.unlocked = true;
+                        unlockedTitles.push(firstBloodAchievement.title);
+                        showAchievementUnlock(firstBloodAchievement);
+                    }
+                }
+                
+                const veteranAchievement = achievements.find(a => a.id === 'veteran');
+                if (veteranAchievement && !veteranAchievement.unlocked) {
+                    veteranAchievement.progress++;
+                    if (veteranAchievement.progress >= veteranAchievement.target) {
+                        veteranAchievement.unlocked = true;
+                        unlockedTitles.push(veteranAchievement.title);
+                        showAchievementUnlock(veteranAchievement);
+                    }
+                }
+                
+                if (currentLevel === 'hard') {
+                    const hardcoreAchievement = achievements.find(a => a.id === 'hardcore');
+                    if (hardcoreAchievement && !hardcoreAchievement.unlocked) {
+                        hardcoreAchievement.progress++;
+                        if (hardcoreAchievement.progress >= hardcoreAchievement.target) {
+                            hardcoreAchievement.unlocked = true;
+                            unlockedTitles.push(hardcoreAchievement.title);
+                            showAchievementUnlock(hardcoreAchievement);
+                        }
+                    }
+                }
+                
+                winStreak++;
+                const streakGodAchievement = achievements.find(a => a.id === 'streakGod');
+                if (streakGodAchievement && !streakGodAchievement.unlocked) {
+                    streakGodAchievement.progress = winStreak;
+                    if (streakGodAchievement.progress >= streakGodAchievement.target) {
+                        streakGodAchievement.unlocked = true;
+                        unlockedTitles.push(streakGodAchievement.title);
+                        showAchievementUnlock(streakGodAchievement);
+                    }
+                }
+                
+                if (playerHP === 100 && currentQuestionIndex === questionsByLevel[currentLevel].length) {
+                    const perfectAchievement = achievements.find(a => a.id === 'perfect');
+                    if (perfectAchievement && !perfectAchievement.unlocked) {
+                        perfectAchievement.progress++;
+                        if (perfectAchievement.progress >= perfectAchievement.target) {
+                            perfectAchievement.unlocked = true;
+                            unlockedTitles.push(perfectAchievement.title);
+                            showAchievementUnlock(perfectAchievement);
+                        }
+                    }
+                }
+                
+                if (powerupsUsed === 0) {
+                    const pureSkillAchievement = achievements.find(a => a.id === 'pureSkill');
+                    if (pureSkillAchievement && !pureSkillAchievement.unlocked) {
+                        pureSkillAchievement.progress++;
+                        if (pureSkillAchievement.progress >= pureSkillAchievement.target) {
+                            pureSkillAchievement.unlocked = true;
+                            unlockedTitles.push(pureSkillAchievement.title);
+                            showAchievementUnlock(pureSkillAchievement);
+                        }
+                    }
+                }
+            } else {
+                winStreak = 0;
+            }
+            
+            // Update stats
+            updateStats(isWin);
+            
+            saveGameData();
+            updatePowerupDisplay();
+            
+            popupContent.className = isWin ? 'popup-content win' : 'popup-content lose';
+            popupContent.innerHTML = `
+                <div class="popup-title">${isWin ? '🎉 YOUR WIN!' : '💀 YOUR LOSE'}</div>
+                <div class="popup-emoji">${isWin ? '🥳✨🏆' : '😭💔👾'}</div>
+                <div class="popup-score">SCORE: ${score}</div>
+                <div class="popup-level">Difficulty: ${currentLevel.toUpperCase()}</div>
+                ${isWin ? '<div class="popup-coins" style="color: gold; margin: 10px;">+20 🪙</div>' : ''}
+                <div class="popup-buttons">
+                    <button class="popup-btn main-menu" onclick="goToMainMenu()">MAIN</button>
+                    <button class="popup-btn new-game" onclick="restartGame()">NEW</button>
+                    <button class="popup-btn leaderboard-btn" onclick="showFullLeaderboard()">🏆</button>
+                </div>
+            `;
+            resultPopup.classList.add('active');
+            
+            if (isWin) {
+                playSound('win');
+            } else {
+                playSound('lose');
+            }
+        }
+
+        window.goToMainMenu = function() {
+            resultPopup.classList.remove('active');
+            page3.classList.remove('active');
+            page1.classList.add('active');
+            heroCards.forEach(c => c.classList.remove('selected'));
+            continueBtn.disabled = true;
+            selectedHero = null;
+            
+            stopAllMusic();
+            playSound('bgMenu');
+            playSound('click');
+        };
+
+        window.restartGame = function() {
+            resultPopup.classList.remove('active');
+            playSound('click');
+            startCountdown(() => {
+                startBattle();
+            });
+        };
+
+        // ===== SAVE/LOAD DATA =====
+        function saveGameData() {
+            localStorage.setItem('coins', coins);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('achievements', JSON.stringify(achievements.map(a => ({ progress: a.progress, unlocked: a.unlocked }))));
+            localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+            localStorage.setItem('selectedTitle', selectedTitle || '');
+            localStorage.setItem('dailyClaimed', dailyClaimed);
+        }
+
+        function loadGameData() {
+            const savedCoins = localStorage.getItem('coins');
+            const savedInventory = localStorage.getItem('inventory');
+            const savedAchievements = localStorage.getItem('achievements');
+            const savedUnlockedTitles = localStorage.getItem('unlockedTitles');
+            const savedSelectedTitle = localStorage.getItem('selectedTitle');
+            const savedDailyClaimed = localStorage.getItem('dailyClaimed');
+            
+            if (savedCoins) coins = parseInt(savedCoins);
+            if (savedInventory) inventory = JSON.parse(savedInventory);
+            if (savedAchievements) {
+                const loaded = JSON.parse(savedAchievements);
+                loaded.forEach((ach, index) => {
+                    if (achievements[index]) {
+                        achievements[index].progress = ach.progress;
+                        achievements[index].unlocked = ach.unlocked;
+                    }
+                });
+            }
+            if (savedUnlockedTitles) unlockedTitles = JSON.parse(savedUnlockedTitles);
+            if (savedSelectedTitle) selectedTitle = savedSelectedTitle;
+            if (savedDailyClaimed) dailyClaimed = savedDailyClaimed === 'true';
+            
+            // Update daily claim button
+            const claimBtn = document.getElementById('claimDailyBtn');
+            if (dailyClaimed) {
+                claimBtn.textContent = 'CLAIMED';
+                claimBtn.disabled = true;
+            }
+            
+            updatePowerupDisplay();
+            updateCurrentTitleDisplay();
+            updateBattleTitle();
+        }
+
+        // ===== INITIALIZE =====
+        function init() {
+            createBackgroundEffects();
+            loadLeaderboard();
+            loadGameData();
+            loadStats();
+            loadQuestData();
+            updatePowerupDisplay();
+            initSounds();
+        }
+
+        init();
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-60px); }
+            }
+            
+            @keyframes healEffect {
+                0% { box-shadow: 0 0 0 rgba(81, 207, 102, 0); }
+                50% { box-shadow: 0 0 50px rgba(81, 207, 102, 0.8), inset 0 0 30px rgba(81, 207, 102, 0.5); }
+                100% { box-shadow: 0 0 0 rgba(81, 207, 102, 0); }
+            }
+
+            .heal-active {
+                animation: healEffect 1s ease-in-out;
+                position: relative;
+            }
+
+            .heal-active::before {
+                content: '❤️';
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 5rem;
+                opacity: 0;
+                animation: healIcon 1s ease-in-out;
+                z-index: 1000;
+                pointer-events: none;
+            }
+
+            @keyframes healIcon {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+                80% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
